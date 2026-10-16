@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+<circle cx="50" cy="50" r="47" fill="#153b2a"/><circle cx="50" cy="50" r="41" fill="none" stroke="#c9a65e" stroke-width="1.5"/>
+<path d="M50 15C32 28 33 40 50 51C67 40 68 28 50 15Z" fill="#c9a65e"/><path d="M50 24V51" stroke="#153b2a" stroke-width="1.5"/>
+<text x="50" y="70" font-family="Georgia,serif" font-size="18" font-weight="bold" text-anchor="middle" fill="#fff">MFI</text><path d="M25 78H75" stroke="#c9a65e" stroke-width="1.5"/></svg>

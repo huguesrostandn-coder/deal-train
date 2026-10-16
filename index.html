@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Administration du catalogue | MBOG FOOD INDUSTRY</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+body{background:#f7f3e9}.admin-shell{max-width:900px;margin:48px auto;padding:0 20px}.admin-head{background:#153b2a;color:#fff;padding:28px}.admin-head h1{font:400 30px Georgia,serif;margin:5px 0}.admin-head p{color:#d1dbd0;font-size:12px;margin:0}.admin-panel{background:#fff;padding:28px;margin-top:18px;box-shadow:0 10px 35px #102b1f0b}.admin-panel h2{font:400 23px Georgia,serif;color:#153b2a}.notice{background:#f7f0dc;border-left:3px solid #c9a65e;padding:14px;font-size:12px;line-height:1.7}.admin-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.admin-form label{font-size:11px;font-weight:bold;display:block;margin-bottom:6px}.admin-form input,.admin-form textarea,.admin-form select{width:100%;padding:11px;border:1px solid #ded8ca;background:#fcfbf8;font-size:12px}.admin-form .full{grid-column:1/-1}.admin-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.admin-button{border:0;background:#153b2a;color:#fff;padding:12px 16px;font-size:11px;font-weight:bold;cursor:pointer}.admin-button.secondary{background:#e8dfc9;color:#153b2a}.admin-output{white-space:pre-wrap;background:#102b1f;color:#e8e2d2;padding:18px;font:11px/1.7 monospace;overflow:auto;max-height:300px}.admin-list{font-size:12px;line-height:1.8}.admin-list li{margin:5px 0}.admin-footer{font-size:10px;color:#777;margin-top:20px}@media(max-width:600px){.admin-form{grid-template-columns:1fr}.admin-form .full{grid-column:auto}.admin-panel{padding:20px}.admin-head{padding:22px}}
+</style></head>
+<body><div class="admin-shell">
+<header class="admin-head"><a href="../" style="color:#e3ce98;font-size:10px">← Voir le site public</a><h1>Administration du catalogue</h1><p>ETS MBOG FOOD INDUSTRY · Outil local de préparation des fiches produits</p></header>
+<section class="admin-panel"><div class="notice"><strong>Important — fonctionnement de cette version :</strong> cette page est un outil de préparation, pas un tableau de bord sécurisé connecté au site. Les changements ne sont pas publiés automatiquement et les données ne sont pas enregistrées sur un serveur. N'y saisissez aucun mot de passe ou renseignement confidentiel. Pour une administration à distance avec connexion sécurisée et sauvegarde en ligne, il faut ajouter un backend/CMS.</div></section>
+<section class="admin-panel"><h2>Préparer une fiche produit</h2><p style="font-size:12px;color:#70786d">Remplissez les champs puis générez une fiche JSON que vous pourrez transmettre au développeur ou intégrer à une future version du catalogue.</p>
+<form id="productForm" class="admin-form">
+<div><label for="productName">Nom du produit *</label><input id="productName" required placeholder="Ex. : Vin de fruits"></div>
+<div><label for="category">Catégorie</label><select id="category"><option>Vins de fruits</option><option>Éditions événementielles</option><option>Bouteilles personnalisées</option><option>Autre</option></select></div>
+<div><label for="price">Prix indicatif (FCFA)</label><input id="price" placeholder="Ex. : 5000 ou Sur devis"></div>
+<div><label for="availability">Disponibilité</label><select id="availability"><option>À confirmer</option><option>Disponible</option><option>Indisponible</option><option>Sur commande</option></select></div>
+<div class="full"><label for="photo">Nom du fichier photo officiel</label><input id="photo" placeholder="Ex. : assets/vin-fruit-rouge.jpg"></div>
+<div class="full"><label for="description">Description *</label><textarea id="description" rows="3" required placeholder="Description courte et exacte du produit"></textarea></div>
+<div class="full"><label for="notes">Notes internes (facultatif)</label><textarea id="notes" rows="2" placeholder="Détails à vérifier avant publication"></textarea></div>
+</form><div class="admin-actions"><button class="admin-button" id="generate">Générer la fiche JSON</button><button class="admin-button secondary" id="download" disabled>Télécharger le JSON</button><button class="admin-button secondary" id="reset">Effacer les champs</button></div><p id="status" role="status" style="font-size:11px;color:#153b2a"></p><pre class="admin-output" id="output">La fiche générée apparaîtra ici.</pre></section>
+<section class="admin-panel"><h2>À faire pour une vraie administration en ligne</h2><ol class="admin-list"><li>Choisir un CMS ou un backend (par exemple WordPress, ou une application avec base de données).</li><li>Créer une authentification administrateur sécurisée et activer HTTPS.</li><li>Connecter le catalogue public à une base de données et un stockage d'images.</li><li>Tester les sauvegardes, les rôles d'accès et la récupération du compte avant publication.</li></ol><p class="admin-footer">Cette page statique ne protège pas l'accès et ne remplace pas un système d'administration authentifié. Ne pas utiliser comme panneau de gestion confidentiel en production.</p></section>
+</div>
+<script>
+let currentJson = '';
+const form = document.getElementById('productForm');
+document.getElementById('generate').addEventListener('click', () => {
+  if (!form.reportValidity()) return;
+  const item = {
+    name: document.getElementById('productName').value.trim(),
+    category: document.getElementById('category').value,
+    price: document.getElementById('price').value.trim() || 'À confirmer',
+    availability: document.getElementById('availability').value,
+    photo: document.getElementById('photo').value.trim() || 'À remplacer par une photo officielle',
+    description: document.getElementById('description').value.trim(),
+    internalNotes: document.getElementById('notes').value.trim(),
+    currency: 'XAF',
+    status: 'draft',
+    createdAt: new Date().toISOString()
+  };
+  currentJson = JSON.stringify(item, null, 2);
+  document.getElementById('output').textContent = currentJson;
+  document.getElementById('download').disabled = false;
+  document.getElementById('status').textContent = 'Fiche JSON générée. Elle n’a pas été publiée sur le site.';
+});
+document.getElementById('download').addEventListener('click', () => {
+  if (!currentJson) return;
+  const blob = new Blob([currentJson], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fiche-produit-mbog.json';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+document.getElementById('reset').addEventListener('click', () => {
+  form.reset(); currentJson = '';
+  document.getElementById('output').textContent = 'La fiche générée apparaîtra ici.';
+  document.getElementById('download').disabled = true;
+  document.getElementById('status').textContent = '';
+});
+</script></body></html>
